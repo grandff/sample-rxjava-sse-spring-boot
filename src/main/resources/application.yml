@@ -1,0 +1,44 @@
+server:
+  undertow:
+    max-http-post-size: 20971520
+    no-request-timeout: 60000
+
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+    session:
+      tracking-modes: COOKIE
+
+spring:
+  profiles:
+    active: local
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+  sql:
+    init:
+      encoding: UTF-8
+
+  jpa:
+    hibernate:
+      # h2 로 테스트할때는 테이블이 자동 생성
+      ddl-auto: update # none, validate, update, create, create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        show-sql: true
+        format-sql: true
+        use-sql-comments: true
+
+    # spring doc 설정
+    springdoc:
+      swagger-ui:
+      enabled: true
+
+logging:
+  level:
+    root: info
