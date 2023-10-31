@@ -68,8 +68,7 @@
 			<artifactId>rxjava</artifactId>
 			<version>3.1.6</version>
 		</dependency>
-
-    <!--IMPORTANT!!! ADD THIS DEPENDENCY TO SOLVE HttpMediaNotAcceptableException-->
+    	<!--IMPORTANT!!! ADD THIS DEPENDENCY TO SOLVE HttpMediaNotAcceptableException-->
         <dependency>
             <groupId>io.reactivex</groupId>
             <artifactId>rxjava-reactive-streams</artifactId>
@@ -93,6 +92,10 @@
             <version>2.25.0</version>
             <scope>test</scope>
         </dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
 	</dependencies>
     
 

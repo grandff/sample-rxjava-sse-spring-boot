@@ -23,6 +23,11 @@ spring:
     init:
       encoding: UTF-8
 
+  security:
+    user:
+      name: admin
+      password: 1234
+
   jpa:
     hibernate:
       # h2 로 테스트할때는 테이블이 자동 생성

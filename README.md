@@ -15,19 +15,20 @@ DB는 h2를 사용했습니다.
     " authro와 book은 1:N 관계
 - [X] update a book (rxjava)
     " 책 정보 수정 (patch)
-- [ ] get lis of books (rxjava)
+- [X] get lis of books (rxjava)
     " 책 목록 조회 (get)
-- [ ] get a book's details (rxjava)
+- [X] get a book's details (rxjava)
     " 책 상세 조회 (get)
-- [ ] delete a book (rxjava)
+- [X] delete a book (rxjava)
     " 책 삭제 (delete)
 - [X] common response entity
 - [ ] file upload
 - [ ] file download
 - [ ] jwt login
 - [ ] refresh token
-- [ ] SSE (Server Sent Event) - 카운트 알림 받기
+- [X] SSE (Server Sent Event)
 - [ ] CRUD Basic API
+- [X] Spring Security
 - [X] swagger
 - [X] unit test
     " 모든 API 요청에 대해 추가
@@ -67,6 +68,16 @@ DB는 h2를 사용했습니다.
 
 [스케줄러](https://4z7l.github.io/2020/12/14/rxjava-5.html)
 
+[Spring Security 최신 버전 문법 확인](https://sennieworld.tistory.com/109)
+
+[h2 console true인 경우 Security 적용 시 빌드 에러](https://forwe.tistory.com/m/66)
+
+[SSE 예제 1](https://dkswnkk.tistory.com/702)
+
+[SSE 예제 2](https://tecoble.techcourse.co.kr/post/2022-10-11-server-sent-events/)
+
+[JPA 쿼리 차이점](https://velog.io/@jehpark/Spring-Data-JPA-%EC%BF%BC%EB%A6%AC-like-containing%EC%9D%98-%EC%B0%A8%EC%9D%B4%EC%A0%90)
+
 ## 💻 Tech Stack
 
 **Main Framework** - [Spring Boot](https://nextjs.org/blog/next-13/)  
@@ -76,8 +87,8 @@ DB는 h2를 사용했습니다.
 
 ## 👨🏻‍💻 Running Locally
 
-- db : h2
-- swagger : <http://localhost:8080/swagger-ui.html>
+- database : h2
+- docs : <http://localhost:8080/swagger-ui/index.html>
 
 ```bash
 

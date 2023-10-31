@@ -39,6 +39,11 @@ public class BaseResponse<T> {
         return new BaseResponse<>(StatusEnum.FAIL, null, ResultCodeEnum.BAD_REQUEST, "올바른 키가 아닙니다.");
     }
 
+    // NOT FOUND
+    public static BaseResponse<?> actionNotFound() {
+        return new BaseResponse<>(StatusEnum.FAIL, null, ResultCodeEnum.NOT_FOUND, "데이터를 찾지 못했습니다.");
+    }
+
     // INDEX
     public static BaseResponse<?> actionMain() {
         return new BaseResponse<>(StatusEnum.SUCCESS, "Nice to meet you stranger!", ResultCodeEnum.SUCCESS, null);

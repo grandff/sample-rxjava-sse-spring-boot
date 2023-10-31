@@ -1,17 +1,21 @@
 package com.kjm.sample.rxjava.rxjavarestapi.book;
 
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.h2.api.ErrorCode;
+import java.util.Collections;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,6 +29,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kjm.sample.rxjava.rxjavarestapi.author.model.dto.AddAuthorRequestDto;
 import com.kjm.sample.rxjava.rxjavarestapi.book.model.dto.AddBookRequestDto;
+import com.kjm.sample.rxjava.rxjavarestapi.book.model.dto.BookResponseDto;
 import com.kjm.sample.rxjava.rxjavarestapi.book.model.dto.UpdateBookRequestDto;
 import com.kjm.sample.rxjava.rxjavarestapi.book.service.BookService;
 import com.kjm.sample.rxjava.rxjavarestapi.common.enums.ResultCodeEnum;
@@ -71,19 +76,23 @@ public class BookControllerTest {
 
     @Test
     public void AddBook_Failed_AuthorNotFound_Return404EntityNotFound() throws JsonProcessingException, Exception {
+        // author 정보가 없음을 가정하기 위해 404 not found exception 발생
         when(bookService.addBook(any(AddBookRequestDto.class)))
                 .thenReturn(Single.error(new EntityNotFoundException()));
 
+        // 테스트 시작
         MvcResult mvcResult = mockMvc.perform(post("/api/book/v1.0")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(new AddBookRequestDto())))
                 .andReturn();
 
-        // mockMvc.perform(asyncDispatch(mvcResult))
-        //         .andExpect(status().isNotFound())
-        //         .andExpect(jsonPath("$.errorCode", equalTo(ErrorCode.ENTITY_NOT_FOUND.toString())))
-        //         .andExpect(jsonPath("$.data", nullValue()));
-
+        mockMvc.perform(asyncDispatch(mvcResult))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.status").value(StatusEnum.FAIL.toString()))
+            .andExpect(jsonPath("$.data").doesNotExist()) // 또는 .value(null)
+            .andExpect(jsonPath("$.resultCode").value(ResultCodeEnum.NOT_FOUND.name()));
+        
+        // 한번만 호출됐는지 확인
         verify(bookService, times(1)).addBook(any(AddBookRequestDto.class));
 
     }
@@ -112,37 +121,155 @@ public class BookControllerTest {
     }
 
     @Test
-    public void UpdateBook_Failed_BookIdNotFound_Return404EntityNotFound() {
+    public void UpdateBook_Failed_BookIdNotFound_Return404EntityNotFound() throws JsonProcessingException, Exception {
+        // 업데이트 할 책 정보가 없음을 가정하기 위해 404 not found exception 발생
+        when(bookService.updateBook(any(UpdateBookRequestDto.class)))
+            .thenReturn(Completable.error(new EntityNotFoundException()));
 
+        // 테스트
+        MvcResult mvcResult = mockMvc.perform(
+                patch("/api/book/v1.0/id", "123")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(new UpdateBookRequestDto()))        
+            ).andReturn();
+        
+        mockMvc.perform(asyncDispatch(mvcResult))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.status").value(StatusEnum.FAIL.toString()))
+            .andExpect(jsonPath("$.data").doesNotExist()) // 또는 .value(null)
+            .andExpect(jsonPath("$.resultCode").value(ResultCodeEnum.NOT_FOUND.name()));
+
+        // 한번만 호출했는지 확인
+        verify(bookService, times(1)).updateBook(any(UpdateBookRequestDto.class));
     }
 
     @Test
-    public void GetAllBooks_LimitAndPageSpecified_Success_Return200WithListOfBookWebResponse() {
+    public void GetAllBooks_LimitAndPageSpecified_Success_Return200WithListOfBookWebResponse() throws Exception {
+        // 책 목록 조회를 위해 기본 값 설정
+        when(bookService.getAllBooks(anyInt(), anyInt()))
+            .thenReturn(Single.just(Collections.singletonList(new BookResponseDto())));
 
+        // 테스트
+        MvcResult mvcResult = mockMvc.perform(
+                get("/api/book/v1.0?limit=10&page=0")                
+                .contentType(MediaType.APPLICATION_JSON_VALUE)                
+            ).andReturn();
+
+        mockMvc.perform(asyncDispatch(mvcResult))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value(StatusEnum.SUCCESS.toString()))
+            .andExpect(jsonPath("$.data").exists())
+            .andExpect(jsonPath("$.resultCode").value(ResultCodeEnum.SUCCESS.name()));
+
+        // 한번만 호출했는지 확인
+        verify(bookService, times(1)).getAllBooks(anyInt(), anyInt());
     }
 
     @Test
-    public void GetAllBooks_LimitAndPageNotSpecified_Success_Return200WithListOfBookWebResponse() {
+    public void GetAllBooks_LimitAndPageNotSpecified_Success_Return200WithListOfBookWebResponse() throws Exception {
+        // 책 목록 조회를 위해 기본 값 설정
+        when(bookService.getAllBooks(anyInt(), anyInt()))
+            .thenReturn(Single.just(Collections.singletonList(new BookResponseDto())));
 
+        // 테스트
+        MvcResult mvcResult = mockMvc.perform(
+                get("/api/book/v1.0")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)                
+            ).andReturn();
+
+        mockMvc.perform(asyncDispatch(mvcResult))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value(StatusEnum.SUCCESS.toString()))
+            .andExpect(jsonPath("$.data").exists())
+            .andExpect(jsonPath("$.resultCode").value(ResultCodeEnum.SUCCESS.name()));
+
+        // 한번만 호출했는지 확인
+        verify(bookService, times(1)).getAllBooks(anyInt(), anyInt());
     }
 
     @Test
-    public void GetBookDetail_Success_Return200WithBookWebResponse() {
+    public void GetBookDetail_Success_Return200WithBookWebResponse() throws Exception {
+        // 상세조회 설정
+        when(bookService.getBookDetail(anyString()))
+            .thenReturn(Single.just(new BookResponseDto()));
 
+        // 테스트
+        MvcResult mvcResult = mockMvc.perform(
+                get("/api/book/v1.0/1")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)                
+            ).andReturn();
+
+        mockMvc.perform(asyncDispatch(mvcResult))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value(StatusEnum.SUCCESS.toString()))
+            .andExpect(jsonPath("$.data").exists())
+            .andExpect(jsonPath("$.resultCode").value(ResultCodeEnum.SUCCESS.name()));
+        
+        // 한번만 호출했는지 확인
+        verify(bookService, times(1)).getBookDetail(anyString());
     }
 
     @Test
-    public void GetBookDetail_Failed_BookIdNotFound_Return404EntityNotFound() {
+    public void GetBookDetail_Failed_BookIdNotFound_Return404EntityNotFound() throws Exception {        
+        // not found error setting
+        when(bookService.getBookDetail(anyString()))
+            .thenReturn(Single.error(new EntityNotFoundException()));
 
+        // 테스트
+        MvcResult mvcResult = mockMvc.perform(
+                get("/api/book/v1.0/1")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)                
+            ).andReturn();
+        mockMvc.perform(asyncDispatch(mvcResult))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.status").value(StatusEnum.FAIL.toString()))
+            .andExpect(jsonPath("$.data").doesNotExist()) // 또는 .value(null)
+            .andExpect(jsonPath("$.resultCode").value(ResultCodeEnum.NOT_FOUND.name()));
+
+        // 한번만 호출했는지 확인
+        verify(bookService, times(1)).getBookDetail(anyString());
     }
 
     @Test
-    public void DeleteBook_Success_Return200() {
+    public void DeleteBook_Success_Return200() throws Exception {
+        // 삭제설정
+        when(bookService.deleteBook(anyString()))
+            .thenReturn(Completable.complete());
+        
+        // 테스트
+        MvcResult mvcResult = mockMvc.perform(
+            delete("/api/book/v1.0/1")   
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+        ).andReturn();
 
+        mockMvc.perform(asyncDispatch(mvcResult))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value(StatusEnum.SUCCESS.toString()))
+            .andExpect(jsonPath("$.data").doesNotExist()) // 또는 .value(null)
+            .andExpect(jsonPath("$.resultCode").value(ResultCodeEnum.SUCCESS_DELETE.name()));
+
+        // 한번만 호출했는지 확인
+        verify(bookService, times(1)).deleteBook(anyString());
     }
 
     @Test
-    public void DeleteBook_Failed_BookIdNotFound_Return404EntityNotFound() {
+    public void DeleteBook_Failed_BookIdNotFound_Return404EntityNotFound() throws Exception {
+        // not found 설정
+        when(bookService.deleteBook(anyString()))
+            .thenReturn(Completable.error(new EntityNotFoundException()));
+        
+        // 테스트
+        MvcResult mvcResult = mockMvc.perform(
+            delete("/api/book/v1.0/1")
+        ).andReturn();
 
+        mockMvc.perform(asyncDispatch(mvcResult))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.status").value(StatusEnum.FAIL.toString()))
+            .andExpect(jsonPath("$.data").doesNotExist()) // 또는 .value(null)
+            .andExpect(jsonPath("$.resultCode").value(ResultCodeEnum.NOT_FOUND.name()));
+        
+        // 한번만 호출했는지 확인
+        verify(bookService, times(1)).deleteBook(anyString());
     }
 }
