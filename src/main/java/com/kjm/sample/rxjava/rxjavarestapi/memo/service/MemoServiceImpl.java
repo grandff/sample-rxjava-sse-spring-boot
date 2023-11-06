@@ -72,4 +72,10 @@ public class MemoServiceImpl implements MemoService {
     public void deleteMemoByTitle(String memoTtl) {
         memoRepository.deleteAllByMemoTtlContaining(memoTtl);
     }
+
+	@Override
+	public void getAllBooks(int anyInt, int anyInt2) {
+		// TODO Auto-generated method stub
+		
+	}
 }

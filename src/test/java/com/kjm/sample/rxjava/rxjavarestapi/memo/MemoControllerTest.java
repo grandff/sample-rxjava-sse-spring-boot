@@ -33,6 +33,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kjm.sample.rxjava.rxjavarestapi.book.model.dto.BookResponseDto;
 import com.kjm.sample.rxjava.rxjavarestapi.book.model.dto.UpdateBookRequestDto;
+import com.kjm.sample.rxjava.rxjavarestapi.book.service.BookService;
 import com.kjm.sample.rxjava.rxjavarestapi.common.enums.ResultCodeEnum;
 import com.kjm.sample.rxjava.rxjavarestapi.common.enums.StatusEnum;
 import com.kjm.sample.rxjava.rxjavarestapi.memo.model.MemoVo;
@@ -54,6 +55,9 @@ public class MemoControllerTest {
 
     @MockBean
     private MemoService memoService;
+    
+    @MockBean
+    private BookService bookService;
 
     // 메모 등록 정상 여부
     @Test
@@ -184,7 +188,7 @@ public class MemoControllerTest {
 
     // 메모 목록 조회
     @Test
-    public void GetMemoList_Success_Return200WithMemoList() {
+    public void GetMemoList_Success_Return200WithMemoList() throws Exception {
         // 책 목록 조회를 위해 기본 값 설정
         PageRequest pageRequest = PageRequest.of(0, 10);
         MemoVo vo = new MemoVo(1L, "1", "1");
@@ -209,8 +213,7 @@ public class MemoControllerTest {
 
     // 특정 제목을 포함하는 메모 목록 조회
     @Test
-    public void GetMemoListContainTtl_Success_Return200WithMemoList() {
-        // 책 목록 조회를 위해 기본 값 설정
+    public void GetMemoListContainTtl_Success_Return200WithMemoList() throws Exception {
         when(bookService.getAllBooks(anyInt(), anyInt()))
             .thenReturn(Single.just(Collections.singletonList(new BookResponseDto())));
 
@@ -232,7 +235,7 @@ public class MemoControllerTest {
 
     // 메모 삭제
     @Test
-    public void DeleteMemo_Success_Return200() {
+    public void DeleteMemo_Success_Return200() throws Exception {
         // 삭제설정
         when(bookService.deleteBook(anyString()))
             .thenReturn(Completable.complete());
@@ -255,7 +258,7 @@ public class MemoControllerTest {
 
     // 특정 제목을 포함하는 메모 삭제
     @Test
-    public void DeleteMemoContainTtl_Success_Return200() {
+    public void DeleteMemoContainTtl_Success_Return200() throws Exception{
         // 삭제설정
         when(bookService.deleteBook(anyString()))
             .thenReturn(Completable.complete());

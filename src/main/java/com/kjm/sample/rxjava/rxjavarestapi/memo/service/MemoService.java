@@ -29,4 +29,6 @@ public interface MemoService {
 
     // 특정 제목을 포함하는 메모 삭제
     void deleteMemoByTitle(String memoTtl);
+
+	void getAllBooks(int anyInt, int anyInt2);
 }
