@@ -1,4 +1,4 @@
-package com.kjm.sample.rxjava.rxjavarestapi.author.model;
+package com.kjm.sample.rxjava.rxjavarestapi.member.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,23 +7,21 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table (name = "T_AUTHORS")
+@Table(name = "T_MEMBERS")
 @Entity
-public class AuthorVo {
-
+public class MemberVo {
     @Id
-    @Column(name = "AUTHOR_ID")
+    @Column(name = "ID")
     private String id;
 
-    @Column(name = "NAME")
-    private String name;
+    @Column(name = "PASSWORD")
+    private String password;
+
 }

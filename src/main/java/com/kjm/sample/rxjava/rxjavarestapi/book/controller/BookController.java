@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kjm.sample.rxjava.rxjavarestapi.book.model.BookVo;
 import com.kjm.sample.rxjava.rxjavarestapi.book.model.dto.AddBookRequestDto;
 import com.kjm.sample.rxjava.rxjavarestapi.book.model.dto.BookResponseDto;
 import com.kjm.sample.rxjava.rxjavarestapi.book.model.dto.UpdateBookRequestDto;
+import com.kjm.sample.rxjava.rxjavarestapi.book.repository.BookRepository;
 import com.kjm.sample.rxjava.rxjavarestapi.book.service.BookService;
 import com.kjm.sample.rxjava.rxjavarestapi.common.BaseResponse;
 import com.kjm.sample.rxjava.rxjavarestapi.common.enums.ResultCodeEnum;
@@ -29,13 +31,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/book")
 public class BookController {
-        private final BookService bookService;
-
+        private final BookService bookService; 
+ 
         @Operation(summary = "book 추가", description = "book 추가")
         @Parameters({
                         @Parameter(name = "title", description = "책 이름"),
