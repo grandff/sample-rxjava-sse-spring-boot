@@ -3,6 +3,7 @@ package com.kjm.sample.rxjava.rxjavarestapi.book.controller;
 import java.net.URI;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -47,8 +48,17 @@ public class BookController {
         })
         @PostMapping(value = "/v1.0", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
         public Single<ResponseEntity<BaseResponse<?>>> addBook(@RequestBody AddBookRequestDto addBookRequestDto) {
-                return bookService.addBook(addBookRequestDto).subscribeOn(Schedulers.io()).map(
-                                s -> ResponseEntity.created(URI.create("/api/book/" + s))
+        	
+        	
+        	/*
+        	 * String book = bookService.addBox().subscribeon();
+        	 * return ResponseENtity.created().body(~~);
+        	 * 
+        	 */
+                return bookService
+                		.addBook(addBookRequestDto)
+                		.subscribeOn(Schedulers.io())
+                		.map(s -> ResponseEntity.created(URI.create("/api/book/v1.0/"+s))
                                                 .body(BaseResponse.actionCreateSuccess()));
         }
 

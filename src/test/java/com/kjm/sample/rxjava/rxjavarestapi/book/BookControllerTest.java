@@ -87,7 +87,7 @@ public class BookControllerTest {
                 .andReturn();
 
         mockMvc.perform(asyncDispatch(mvcResult))
-            .andExpect(status().isNotFound())
+            .andExpect(status().isUnprocessableEntity())
             .andExpect(jsonPath("$.status").value(StatusEnum.FAIL.toString()))
             .andExpect(jsonPath("$.data").doesNotExist()) // 또는 .value(null)
             .andExpect(jsonPath("$.resultCode").value(ResultCodeEnum.NOT_FOUND.name()));

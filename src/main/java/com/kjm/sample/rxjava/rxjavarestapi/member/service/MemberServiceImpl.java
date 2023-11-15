@@ -41,7 +41,7 @@ public class MemberServiceImpl implements MemberService {
 			Optional<MemberVo> memberVo = memberRepository.findById(addMemberRequestDto.getId());
 			if (memberVo.isPresent()) {
 	           	//이미 존재함
-				singleSubscriber.onError(new EntityExistsException("Exists Member"));				
+				singleSubscriber.onError(new EntityExistsException());				
             }else {
             	String addMemberId = memberRepository.save(toMember(addMemberRequestDto)).getId();
                 singleSubscriber.onSuccess(addMemberId);

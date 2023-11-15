@@ -1,5 +1,6 @@
 package com.kjm.sample.rxjava.rxjavarestapi.config.interceptor;
 
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -16,6 +17,7 @@ public class TestInterceptor implements HandlerInterceptor{
 		// TODO Auto-generated method stub
 		//return HandlerInterceptor.super.preHandle(request, response, handler);
 		log.info("preHandle 호출");
+		System.out.println("sysout으로 preHandle 호출 ");
 		return true;
 	}
 	
@@ -25,5 +27,6 @@ public class TestInterceptor implements HandlerInterceptor{
 		// TODO Auto-generated method stub
 		//HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
 		log.info("postHandle 호출");
+		System.out.println("sysout으로 postHandle 호출 ");
 	}
 }

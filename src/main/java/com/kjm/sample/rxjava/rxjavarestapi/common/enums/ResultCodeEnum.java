@@ -13,6 +13,7 @@ public enum ResultCodeEnum {
     UNAUTHORIZED(401),
     NOT_FOUND(404),
     RUNTIME_ERROR(406),
+    UNPROCESSABLE_ENTITY(422),
     SERVER_ERROR(500),
     NULL_ERROR(500);
 

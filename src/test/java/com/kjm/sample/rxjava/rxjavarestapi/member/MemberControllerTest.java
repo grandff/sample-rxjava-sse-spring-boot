@@ -39,6 +39,7 @@ import com.kjm.sample.rxjava.rxjavarestapi.member.service.MemberService;
 
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Single;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -53,7 +54,8 @@ public class MemberControllerTest {
     @MockBean
     private MemberService memberService;
 
-    // 책 등록 정상 여부 테스트
+  
+    // 사용자 등록 정상 여부 테스트
     @Test
     public void AddMember_Success_Return201() throws JsonProcessingException, Exception  {
         // addMember 메서드가 addMemberRequestDto 클래스의 어떤 객체를 인자로 받아도 항상 testID로 반환 하도록 설정
@@ -76,30 +78,31 @@ public class MemberControllerTest {
         verify(memberService, times(1)).addMember(any(AddMemberRequestDto.class));
     }
     
-    /*
-
+    
     @Test
-    public void AddBook_Failed_AuthorNotFound_Return404EntityNotFound() throws JsonProcessingException, Exception {
+    public void AddMember_Failed_ExistsMember_Return404EntityNotFound() throws JsonProcessingException, Exception {
         // author 정보가 없음을 가정하기 위해 404 not found exception 발생
-        when(bookService.addBook(any(AddBookRequestDto.class)))
-                .thenReturn(Single.error(new EntityNotFoundException()));
+        when(memberService.addMember(any(AddMemberRequestDto.class)))
+                .thenReturn(Single.error(new EntityExistsException()));
 
         // 테스트 시작
-        MvcResult mvcResult = mockMvc.perform(post("/api/book/v1.0")
+        MvcResult mvcResult = mockMvc.perform(post("/api/member/v1.0")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(new AddBookRequestDto())))
+                .content(objectMapper.writeValueAsString(new AddMemberRequestDto())))
                 .andReturn();
 
         mockMvc.perform(asyncDispatch(mvcResult))
-            .andExpect(status().isNotFound())
+            .andExpect(status().isUnprocessableEntity())
             .andExpect(jsonPath("$.status").value(StatusEnum.FAIL.toString()))
             .andExpect(jsonPath("$.data").doesNotExist()) // 또는 .value(null)
-            .andExpect(jsonPath("$.resultCode").value(ResultCodeEnum.NOT_FOUND.name()));
+            .andExpect(jsonPath("$.resultCode").value(ResultCodeEnum.UNPROCESSABLE_ENTITY.name()));
         
         // 한번만 호출됐는지 확인
-        verify(bookService, times(1)).addBook(any(AddBookRequestDto.class));
+        verify(memberService, times(1)).addMember(any(AddMemberRequestDto.class));
 
     }
+    
+    /*
 
     @Test
     public void UpdateBook_Success_Return200() throws JsonProcessingException, Exception {

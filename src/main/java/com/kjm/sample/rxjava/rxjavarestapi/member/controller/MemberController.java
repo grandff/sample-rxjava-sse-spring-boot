@@ -45,6 +45,7 @@ import lombok.extern.log4j.Log4j2;
 public class MemberController {
         private final MemberService memberService;
         
+
         @Operation(summary = "member 추가", description = "member 추가")
         @Parameters({
                         @Parameter(name = "id", description = "사용자 ID"),
@@ -54,9 +55,10 @@ public class MemberController {
         public Single<ResponseEntity<BaseResponse<?>>> addMember(@RequestBody AddMemberRequestDto addMemberRequestDto) {
                 return memberService.addMember(addMemberRequestDto)
                 		.subscribeOn(Schedulers.io())
-                		.map(s -> ResponseEntity.created(URI.create("/api/member/" + s))
+                		.map(memberId -> ResponseEntity.created(URI.create("/api/member/" + memberId))
                                                 .body(BaseResponse.actionCreateSuccess()));
         }
+
         
         
         @Operation(summary = "member 수정", description = "member 수정")
