@@ -47,3 +47,8 @@ spring:
 logging:
   level:
     root: info
+
+jwt:
+  secret-key: your-secret-key-should-be-at-least-256-bits-long
+  access-token-validity-in-minutes: 30
+  refresh-token-validity-in-days: 7

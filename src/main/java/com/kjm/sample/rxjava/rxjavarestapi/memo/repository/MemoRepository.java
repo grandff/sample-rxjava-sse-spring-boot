@@ -1,6 +1,5 @@
 package com.kjm.sample.rxjava.rxjavarestapi.memo.repository;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -12,7 +11,7 @@ import com.kjm.sample.rxjava.rxjavarestapi.memo.model.MemoVo;
 
 import jakarta.transaction.Transactional;
 
-public interface MemoRepository extends JpaRepository<MemoVo, String> {
+public interface MemoRepository extends JpaRepository<MemoVo, Long> {
     // 특정 제목을 포함하는 메모 목록 조회
     Page<MemoVo> findAllByMemoTtlContaining(String memoTtl, Pageable pageable);
 
